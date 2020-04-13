@@ -10,10 +10,19 @@ export interface Container<Value, State = void> {
 	useContainer: () => Value
 }
 
+export interface ContextOptions {
+	displayName?: string
+}
+
 export function createContainer<Value, State = void>(
 	useHook: (initialState?: State) => Value,
+	contextOptions: ContextOptions = {},
 ): Container<Value, State> {
 	let Context = React.createContext<Value | null>(null)
+
+	if (contextOptions.displayName) {
+		Context.displayName = contextOptions.displayName
+	}
 
 	function Provider(props: ContainerProviderProps<State>) {
 		let value = useHook(props.initialState)
