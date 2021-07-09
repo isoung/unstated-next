@@ -1,5 +1,7 @@
 import React from "react"
 
+const EMPTY: unique symbol = Symbol()
+
 export interface ContainerProviderProps<State = void> {
 	initialState?: State
 	children: React.ReactNode
@@ -18,7 +20,7 @@ export function createContainer<Value, State = void>(
 	useHook: (initialState?: State) => Value,
 	contextOptions: ContextOptions = {},
 ): Container<Value, State> {
-	let Context = React.createContext<Value | null>(null)
+	let Context = React.createContext<Value | typeof EMPTY>(EMPTY)
 
 	if (contextOptions.displayName) {
 		Context.displayName = contextOptions.displayName
@@ -31,7 +33,7 @@ export function createContainer<Value, State = void>(
 
 	function useContainer(): Value {
 		let value = React.useContext(Context)
-		if (value === null) {
+		if (value === EMPTY) {
 			throw new Error("Component must be wrapped with <Container.Provider>")
 		}
 		return value
